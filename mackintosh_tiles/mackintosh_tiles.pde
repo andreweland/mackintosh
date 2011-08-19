@@ -1,3 +1,18 @@
+// Render an image insipired by Charles Rennie Mackintosh's tile patterns on the staircases
+// of the Glasgow School of Art.
+//
+// Examples of the tile pattens can be seen at http://bit.ly/p10Vm1. Each pattern appears be 
+// constructed fromtwo groups of tile - the outer ring, and the inner. The outer ring has 2, 3
+// or 4 tiles on each side. The inner has 1, 2 or 4 tiles. The two groups appear to be coloured
+// independently, either white, blue or green.
+// Handily, this allows each pattern to be represented as a 4 digit number in base 3, using
+// digits for the inner and outer tile count, and their reprective colours. The final image is
+// built from iterating through all possible permutations.
+// It'd be fun to stich the final image from photos of the actual tiles, rather than the flat
+// graphics here. That's for another day.
+//
+// Andrew Eland (andrew@andreweland.org)
+
 class Pattern {
   int outerCount;
   int outerColour;
@@ -76,6 +91,8 @@ void setup() {
   int outputSize = (9 * patternSize) + (10 * spacing);
   size(outputSize, outputSize);
   background(#b3b1c2);
+  // Rendering each tile as a single colour makes the output look a little flat and boring -
+  // so we use two colours (at index n and n+3) to spice things up somewhat.
   color colours[] = {#ebfdfc, #10408b, #86a094, #dbf3f3, #0a34f5, #7f9a89};
   Pattern pattern = new Pattern(42);
   translate(spacing, spacing);
