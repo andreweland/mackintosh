@@ -70,6 +70,8 @@ class Pattern {
   void drawTile(int x, int y, int tileSize, int colour, color[] colours) {
     fill(colours[colour]);
     rect(x, y, tileSize, tileSize);
+    // Add a slight, random,t highlight pattern to each tile, so the final result
+    // isn't so flat.
     fill(colours[colour + 3]);
     for (int dx = x; dx < x + tileSize; dx += 4) {
       for (int dy = y; dy < y + tileSize; dy += 4) {
@@ -105,5 +107,6 @@ void setup() {
       popMatrix();
     }
   }
+  save("output.png");
 }
 
