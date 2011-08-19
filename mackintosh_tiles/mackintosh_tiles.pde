@@ -1,10 +1,10 @@
-class TileGroup {
+class Pattern {
   int outerCount;
   int outerColour;
   int innerCount;
   int innerColour;
   
-  TileGroup(int n) {
+  Pattern(int n) {
     fromInt(n); 
   }
   
@@ -20,57 +20,71 @@ class TileGroup {
     innerColour = n % 3;
   }
 
-  void draw(int groupSize, int tileSize, color[] colours) {
-    drawOuter(groupSize, tileSize, colours);
-    drawInner(groupSize, tileSize, colours);
+  void draw(int patternSize, int tileSize, color[] colours) {
+    drawOuter(patternSize, tileSize, colours);
+    drawInner(patternSize, tileSize, colours);
   }
   
-  void drawOuter(int groupSize, int tileSize, color[] colours) {
+  void drawOuter(int patternSize, int tileSize, color[] colours) {
     noStroke();
-    fill(colours[outerColour]);
-    int spacing = (groupSize - tileSize) / (outerCount - 1);
-    for (int x = 0; x < groupSize; x += spacing) {
-      rect(x, 0, tileSize, tileSize);
-      rect(x, groupSize - tileSize, tileSize, tileSize);
+    int spacing = (patternSize - tileSize) / (outerCount - 1);
+    for (int x = 0; x < patternSize; x += spacing) {
+      drawTile(x, 0, tileSize, outerColour, colours);
+      drawTile(x, patternSize - tileSize, tileSize, outerColour, colours);
     }
-    for (int y = spacing; y < groupSize - spacing; y += spacing) {
-      rect(0, y, tileSize, tileSize);
-      rect(groupSize - tileSize, y, tileSize, tileSize); 
+    for (int y = spacing; y < patternSize - spacing; y += spacing) {
+      drawTile(0, y, tileSize, outerColour, colours);
+      drawTile(patternSize - tileSize, y, tileSize, outerColour, colours); 
     }
   }
   
-  void drawInner(int groupSize, int tileSize, color[] colours) {
+  void drawInner(int patternSize, int tileSize, color[] colours) {
     noStroke();
     int[] rows = {0, 1, 1, 0, 2};
     int[] columns = {0, 1, 2, 0, 2};
-    fill(colours[innerColour]);
-    int spacing = (groupSize - (tileSize * 4)) / 3;
-    int startX = (groupSize - (columns[innerCount] * tileSize) - ((columns[innerCount] - 1) * spacing)) / 2;
-    int startY = (groupSize - (rows[innerCount] * tileSize) - ((rows[innerCount] - 1) * spacing)) / 2;
-    for (int x = startX, i = 0; i < columns[innerCount]; i++, x += tileSize + spacing) {
-      for (int y = startY, j = 0; j < rows[innerCount]; j++, y += tileSize + spacing) {
-        rect(x, y, tileSize, tileSize);
+    int spacing = (patternSize - (tileSize * 4)) / 3;
+    int x = (patternSize - (columns[innerCount] * tileSize) - ((columns[innerCount] - 1) * spacing)) / 2;
+    int y = (patternSize - (rows[innerCount] * tileSize) - ((rows[innerCount] - 1) * spacing)) / 2;
+    for (int i = 0; i < columns[innerCount]; i++) {
+      for (int j = 0; j < rows[innerCount]; j++) {
+        drawTile(x + ((tileSize + spacing) * i), y + ((tileSize + spacing) * j), tileSize, innerColour, colours);
       }
     } 
+  }
+  
+  void drawTile(int x, int y, int tileSize, int colour, color[] colours) {
+    fill(colours[colour]);
+    rect(x, y, tileSize, tileSize);
+    fill(colours[colour + 3]);
+    for (int dx = x; dx < x + tileSize; dx += 4) {
+      for (int dy = y; dy < y + tileSize; dy += 4) {
+        float r = random(1.0);
+        if(r > 0.7) {
+          rect(dx, dy, 2, 2);
+        } else if(r > 0.5) {
+          rect(dx, dy, 1, 1); 
+        }
+      }
+    }
   }
 }
 
 void setup() {
-  int groupSize = 86;
+  int patternSize = 86;
   int tileSize = 20;
-  int spacing = 4;
-  int width = height = (9 * groupSize) + (10 * spacing);
-  size(width, height);
-  background(#ffffff);
-  color colours[] = {#d7e0f2, #1d2e70, #69856c};
-  TileGroup tileGroup = new TileGroup(42);
-  translate(4, 4);
-  for (int y = 0; y < height; y += (groupSize + spacing)) {
-    for (int x = 0; x < width; x += (groupSize + spacing)) {
+  int spacing = 2;
+  int outputSize = (9 * patternSize) + (10 * spacing);
+  size(outputSize, outputSize);
+  background(#b3b1c2);
+  color colours[] = {#ebfdfc, #10408b, #86a094, #dbf3f3, #0a34f5, #7f9a89};
+  Pattern pattern = new Pattern(42);
+  translate(spacing, spacing);
+  for (int i = 0; i < 9; i++) {
+    for (int j = 0; j < 9; j++) {
       pushMatrix();
-      translate(x, y);
-      tileGroup.fromInt((int)random(81));
-      tileGroup.draw(groupSize, tileSize, colours);
+      translate((patternSize + spacing) * i, (patternSize + spacing) * j);
+      pattern.fromInt((j * 9) + i);
+      pattern.draw(patternSize, tileSize, colours);
       popMatrix();
     }
   }
